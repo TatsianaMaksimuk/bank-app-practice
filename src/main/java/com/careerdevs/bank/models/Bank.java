@@ -1,9 +1,12 @@
 package com.careerdevs.bank.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class Bank {
@@ -13,6 +16,13 @@ public class Bank {
     private String name;
     private String location;
     private String phoneNumber;
+
+
+    @OneToMany(mappedBy = "bank", fetch = FetchType.LAZY) //If issues. change lazy to eager
+//    @JsonIncludeProperties({"firstName", "lastName", "id"}) // - show only this or
+    @JsonIgnoreProperties({"email", "age", "location", "bank"}) //show everything but this, blacklixt
+    private List<Customer> customers;
+    //Can use sets instead of lists
 
 
     //default constructor, we need to write it when we have another constructor:
@@ -29,6 +39,10 @@ public class Bank {
     }
 
     //getters:
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
 
     public Long getId() {
         return id;
@@ -52,6 +66,11 @@ public class Bank {
 
 
     //setters:
+
+
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
+    }
     public void setId(Long id) {
         this.id = id;
     }

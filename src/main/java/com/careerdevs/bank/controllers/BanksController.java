@@ -95,4 +95,10 @@ public class BanksController {
     public ResponseEntity<?> findAllBanksByAreaCode(@PathVariable String areaCode){
         return new ResponseEntity<>(bankRepository.findAllAreaCodes(areaCode), HttpStatus.OK);
     }
-}
+
+    @GetMapping("/customer/{id}")
+    public ResponseEntity<?> findBankByCustomerId(@PathVariable Long id){
+        Bank foundBank = bankRepository.getByCustomers_id(id).orElseThrow(()-> new ResponseStatusException((HttpStatus.NOT_FOUND)));
+        return new ResponseEntity<>(foundBank, HttpStatus.OK);
+    }
+ }
