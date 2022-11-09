@@ -52,7 +52,7 @@ public class CustomersController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //put should never create
     public ResponseEntity<?> updateOneCustomerById(@PathVariable Long id, @RequestBody Customer newCustomerData) {
         Customer requestedCustomer = customerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -85,6 +85,11 @@ public class CustomersController {
 
     }
 
+    @GetMapping("/name/{lastName}")
+    public ResponseEntity<?> getCustomersByLastName(@PathVariable String lastName){
+            List<Customer> foundCustomers = customerRepository.findAllByLastName(lastName);
+            return new ResponseEntity<>(foundCustomers, HttpStatus.OK);
+    }
 
 
     @GetMapping("/bank/{bankId}")
