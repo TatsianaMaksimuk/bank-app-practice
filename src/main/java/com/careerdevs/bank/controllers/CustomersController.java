@@ -25,7 +25,7 @@ public class CustomersController {
     BankRepository bankRepository; //to check bank id we need to give access to bank repository
 
 
-    @PostMapping("/{bankId}")
+    @PostMapping("/{bankId}") // creating customer into bank
     public ResponseEntity<?> createCustomer(@RequestBody Customer newCustomerData, @PathVariable Long bankId) {
         //Before we safe customerData, we need to find a bank by id in repository
         //if bank does not exist return bad request

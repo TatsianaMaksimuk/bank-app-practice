@@ -19,7 +19,7 @@ public class Customer {
     private String location;
 
     @ManyToOne
-    @JoinColumn(name = "bank_id", referencedColumnName = "id")
+    @JoinColumn(name = "bank_id", referencedColumnName = "id") //relationship system
     @JsonIncludeProperties("id")
     private Bank bank; //we need getters and setters for jpa
 
