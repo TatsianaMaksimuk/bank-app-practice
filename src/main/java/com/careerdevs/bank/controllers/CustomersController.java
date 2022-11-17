@@ -2,8 +2,10 @@ package com.careerdevs.bank.controllers;
 
 import com.careerdevs.bank.models.Bank;
 import com.careerdevs.bank.models.Customer;
+import com.careerdevs.bank.models.User;
 import com.careerdevs.bank.repositories.BankRepository;
 import com.careerdevs.bank.repositories.CustomerRepository;
+import com.careerdevs.bank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ public class CustomersController {
 
     @Autowired
     BankRepository bankRepository; //to check bank id we need to give access to bank repository
+
+    @Autowired
+    UserRepository userRepository;
 
 
     @PostMapping("/{bankId}") // creating customer into bank
@@ -96,5 +101,28 @@ public class CustomersController {
     public ResponseEntity<?> getAllCustomersByBankId(@PathVariable Long bankId){
         List<Customer> allCustomers = customerRepository.findAllByBank_id(bankId);
         return  new ResponseEntity<>(allCustomers, HttpStatus.OK);
+    }
+
+    @PostMapping("/token/{loginToken}/{customerId}") //finding user and attaching it to customer// we store user inside a customer
+    public ResponseEntity<?> getUserByLoginToken(@PathVariable String loginToken, @PathVariable Long customerId){
+        //fnd user
+        User requestedUser = userRepository.findUserByLoginToken(loginToken).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        //find customer
+        Customer requestedCustomer = customerRepository.findById(customerId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        requestedCustomer.setUser(requestedUser);
+
+        customerRepository.save(requestedCustomer);
+        return new ResponseEntity<>(requestedCustomer,HttpStatus.OK);
+
+    }
+
+    @GetMapping("/self/{loginToken}")
+    public ResponseEntity<?> getSelfByLoginToken(@PathVariable String loginToken) {
+        User requestedUser = userRepository.findUserByLoginToken(loginToken).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var custs =customerRepository.findByUser_username(requestedUser.getUsername());
+        Customer requestedCustomer = customerRepository.findByUser_username(requestedUser.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return new ResponseEntity<>(requestedCustomer, HttpStatus.OK);
     }
 }

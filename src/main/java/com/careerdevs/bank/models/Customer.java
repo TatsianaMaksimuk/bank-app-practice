@@ -23,6 +23,14 @@ public class Customer {
     @JsonIncludeProperties("id")
     private Bank bank; //we need getters and setters for jpa
 
+
+
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName="username")
+    @JsonIncludeProperties("username")
+    private User user;
+
     public Customer() {
 
     }
@@ -96,6 +104,15 @@ public class Customer {
 
     public void setBank(Bank bank) {
         this.bank = bank;
+    }
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }
