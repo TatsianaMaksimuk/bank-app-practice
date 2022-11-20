@@ -30,14 +30,14 @@ public class CustomersController {
     UserRepository userRepository;
 
 
-    @PostMapping("/{bankId}") // creating customer into bank
-    public ResponseEntity<?> createCustomer(@RequestBody Customer newCustomerData, @PathVariable Long bankId) {
+    @PostMapping("/{bankId}/{loginToken}") // creating customer into bank
+    public ResponseEntity<?> createCustomer(@RequestBody Customer newCustomerData, @PathVariable Long bankId, @PathVariable String loginToken) {
         //Before we safe customerData, we need to find a bank by id in repository
         //if bank does not exist return bad request
         //if bank exists - add new customer data and save:
-
+        User user = userRepository.findUserByLoginToken(loginToken).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Bank requestedBank = bankRepository.findById(bankId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)); //user got us bad request - data was wrong
-
+        newCustomerData.setUser(user);
         newCustomerData.setBank(requestedBank);
         Customer addedCustomer = customerRepository.save(newCustomerData);
 
